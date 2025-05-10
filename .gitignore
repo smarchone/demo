@@ -1,0 +1,11 @@
+# add for terraform*
+*terraform
+*terraform-version
+*terraform.lock.hcl
+*terraform.tfstate
+*terraform.tfstate.backup
+*terraform.tfstate.d
+
+
+*snapshot.db
+*.toml

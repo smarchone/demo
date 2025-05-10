@@ -1,0 +1,43 @@
+# deploy a pod with volume mount at /checkpoints
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-pod
+spec: 
+  hostPID: true
+  restartPolicy: Never
+  containers:
+    - name: test
+      image: indexed22/k3s-hetzner-app:latest
+      imagePullPolicy: Always
+      env:
+        - name: RESTORE
+          value: "1"
+      # command: ["/bin/bash"]
+      # args: ["-c", "while true; do echo hello; sleep 10;done"]
+      securityContext:
+        privileged: true
+        capabilities:
+          add: ["SYS_ADMIN", "CHECKPOINT_RESTORE"]
+      volumeMounts:
+        - mountPath: /checkpoints
+          name: checkpoint-volume
+  volumes:
+  - name: checkpoint-volume
+    persistentVolumeClaim:
+      claimName: local-path-pvc
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: local-path-pvc
+  namespace: default
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-path
+  resources:
+    requests:
+      storage: 2Gi
